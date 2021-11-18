@@ -2,13 +2,14 @@ package lexer
 
 import (
 	"bufio"
+	"bytes"
 	"io"
 	"unicode"
 
 	"calculator/token"
 )
 
-const eof = byte(0)
+const eof = rune(0)
 
 type lex struct {
 	r *bufio.Reader
@@ -24,8 +25,8 @@ func (l *lex) unread() {
 	_ = l.r.UnreadRune()
 }
 
-func (l *lex) read() byte {
-	b, err := l.r.ReadByte()
+func (l *lex) read() rune {
+	b, _, err := l.r.ReadRune()
 
 	if err != nil {
 		return eof
@@ -35,20 +36,31 @@ func (l *lex) read() byte {
 }
 
 func (l *lex) readNumber() token.Token {
-	panic("unimplemented")
-}
 
-func (l lex) Scan() token.Token {
+	var floating bool
+	var buf bytes.Buffer
 
-	b := l.read()
+	for {
+		r := l.read()
 
-	r := rune(b)
-	if unicode.IsNumber(r) {
-		l.unread()
-		return l.readNumber()
+		if r == '.' && !floating {
+			floating = true
+		} else if !unicode.IsDigit(r) {
+			l.unread()
+			break
+		}
+
+		buf.WriteRune(r)
 	}
 
-	switch b {
+	return token.New(token.NUMBER, buf.String())
+}
+
+func (l *lex) Scan() token.Token {
+
+	r := l.read()
+
+	switch r {
 	case '+':
 		return token.New(token.PLUS, "+")
 	case '-':
@@ -60,6 +72,12 @@ func (l lex) Scan() token.Token {
 	case eof:
 		return token.New(token.EOF, "")
 	default:
+
+		if unicode.IsNumber(r) {
+			l.unread()
+			return l.readNumber()
+		}
+
 		return token.New(token.ILLEGAL, "")
 	}
 }
