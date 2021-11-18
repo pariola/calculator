@@ -84,6 +84,6 @@ func (l *lex) Scan() token.Token {
 			return l.readNumber()
 		}
 
-		return token.New(token.ILLEGAL, "")
+		return token.New(token.ILLEGAL, string(r))
 	}
 }
