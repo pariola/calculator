@@ -15,9 +15,9 @@ var (
 		token.O_PARENTHESIS: 5,
 		token.EXPONENT:      4,
 		token.ASTERISK:      3,
-		token.DIVIDE:        2,
-		token.PLUS:          1,
-		token.MINUS:         0,
+		token.DIVIDE:        3,
+		token.PLUS:          2,
+		token.MINUS:         2,
 	}
 )
 
@@ -90,16 +90,18 @@ func (p *Parser) parseToken(t token.Token) {
 	}
 
 	// an operator
-	if elem := p.s.Front(); elem != nil {
+	for elem := p.s.Front(); elem != nil; elem = p.s.Front() {
+
 		head := elem.Value.(token.Token)
 
 		// compare precedence with PEMDAS
-		if head.Type != token.O_PARENTHESIS && pemdas[head.Type] > pemdas[t.Type] {
-
-			// pop stack and enqueue
-			p.s.Remove(elem)
-			p.q.PushBack(head)
+		if head.Type == token.O_PARENTHESIS || pemdas[head.Type] < pemdas[t.Type] {
+			break
 		}
+
+		// pop stack and enqueue
+		p.s.Remove(elem)
+		p.q.PushBack(head)
 	}
 
 	// push operator to stack
