@@ -6,11 +6,16 @@ const (
 	ILLEGAL Type = iota
 	EOF
 
+	// Parenthesis
+	O_PARENTHESIS // (
+	C_PARENTHESIS // )
+
 	// Operators
 	PLUS     // +
 	MINUS    // -
 	DIVIDE   // /
 	ASTERISK // *
+	EXPONENT // ^
 
 	// Numbers -> Integers | Float
 	NUMBER // 12.32, 1560

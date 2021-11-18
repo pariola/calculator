@@ -67,8 +67,14 @@ func (l *lex) Scan() token.Token {
 		return token.New(token.MINUS, "-")
 	case '/':
 		return token.New(token.DIVIDE, "/")
+	case '^':
+		return token.New(token.EXPONENT, "^")
 	case '*':
 		return token.New(token.ASTERISK, "*")
+	case '(':
+		return token.New(token.O_PARENTHESIS, "(")
+	case ')':
+		return token.New(token.C_PARENTHESIS, ")")
 	case eof:
 		return token.New(token.EOF, "")
 	default:
