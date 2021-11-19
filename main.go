@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"calculator/eval"
 	"calculator/lexer"
@@ -13,7 +15,12 @@ func main() {
 	for {
 		fmt.Print("> ")
 
-		l := lexer.New(os.Stdin)
+		r := bufio.NewReader(os.Stdin)
+		in, _ := r.ReadString('\n')
+
+		l := lexer.New(
+			strings.NewReader(in),
+		)
 
 		tokens := parser.New(l).Parse()
 
