@@ -35,6 +35,17 @@ func (l *lex) read() rune {
 	return b
 }
 
+func (l *lex) skipWhitespace() {
+	for {
+		r := l.read()
+
+		if !unicode.IsSpace(r) {
+			l.unread()
+			break
+		}
+	}
+}
+
 func (l *lex) readNumber() token.Token {
 
 	var floating bool
@@ -57,6 +68,9 @@ func (l *lex) readNumber() token.Token {
 }
 
 func (l *lex) Scan() token.Token {
+
+	// skip whitespaces early
+	l.skipWhitespace()
 
 	r := l.read()
 
